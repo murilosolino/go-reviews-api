@@ -1,0 +1,20 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Go: Attach to DLV in Docker",
+      "type": "go",
+      "request": "attach",
+      "mode": "remote",
+      "host": "127.0.0.1",
+      "port": 2345,
+      "cwd": "${workspaceFolder}",
+      "substitutePath": [
+        {
+          "from": "${workspaceFolder}",
+          "to": "/workspace"
+        }
+      ]
+    }
+  ]
+}
