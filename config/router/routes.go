@@ -16,7 +16,7 @@ func InitServer(
 	r.HandleFunc("GET /", conntrollerHc.HealthCheck)
 	r.HandleFunc("GET /reviews", controllerReviews.ListAllReviews)
 	r.HandleFunc("GET /reviews/{id}", controllerReviews.FindReviewById)
-	r.HandleFunc("GET /random-reviews", controllerReviews.GetRandomReviews)
+	r.HandleFunc("GET /reviews-home", controllerReviews.GetRandomReviews)
 	r.HandleFunc("POST /post-review", controllerReviews.CreateNewReview)
 	r.HandleFunc("PATCH /update-review/{id}", controllerReviews.UpdateReview)
 	r.HandleFunc("PUT /update-review/{id}", controllerReviews.UpdateReview)
