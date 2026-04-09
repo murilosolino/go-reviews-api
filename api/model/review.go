@@ -45,6 +45,15 @@ func (m *ReviewModel) FindById(id int) (ReviewsRow, error) {
 	return result, nil
 }
 
+func (m *ReviewModel) FindRandomRegisters(limit int) ([]ReviewsRow, error) {
+	rows, err := m.db.Query("SELECT * FROM reviews ORDER BY RAND() LIMIT ?", limit)
+	if err != nil {
+		slog.Error("[DATBASE:ERROR][ReviewModel][FindRandomRegisters()] Erro ao realizar consulta", "error", err)
+		return nil, err
+	}
+	return m.hydration(rows)
+}
+
 func (m *ReviewModel) Update(id int, r map[string]interface{}) error {
 	query := "UPDATE reviews SET "
 	var values []any

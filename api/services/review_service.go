@@ -19,6 +19,10 @@ func (svc *ReviewService) GetAllReviews() ([]model.ReviewsRow, error) {
 	return svc.rm.List()
 }
 
+func (svc *ReviewService) Get3RandomReviews() ([]model.ReviewsRow, error) {
+	return svc.rm.FindRandomRegisters(3)
+}
+
 func (svc *ReviewService) CreateReview(rev model.ReviewsRow) error {
 	return svc.rm.Save(rev)
 }

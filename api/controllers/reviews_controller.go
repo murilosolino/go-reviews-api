@@ -58,6 +58,20 @@ func (c *ReviewsController) FindReviewById(w http.ResponseWriter, r *http.Reques
 	w.Header().Set("content-type", "application/json")
 }
 
+func (c *ReviewsController) GetRandomReviews(w http.ResponseWriter, r *http.Request) {
+
+	results, err := c.svc.Get3RandomReviews()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(&results)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("content-type", "application/json")
+
+}
+
 func (c *ReviewsController) CreateNewReview(w http.ResponseWriter, r *http.Request) {
 	var rev model.ReviewsRow
 	json.NewDecoder(r.Body).Decode(&rev)
