@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/murilosolino/challenge-backend-7/api/controllers"
+	"github.com/murilosolino/challenge-backend-7/api/middleware"
 )
 
 func InitServer(
@@ -22,7 +23,10 @@ func InitServer(
 	r.HandleFunc("PUT /reviews/{id}", controllerReviews.UpdateReview)
 	r.HandleFunc("DELETE /review/{id}", controllerReviews.ExceludeReview)
 
-	err := http.ListenAndServe(":8080", r)
+	var handler http.Handler = r
+	handler = middleware.CORSMiddleware(r)
+
+	err := http.ListenAndServe(":8080", handler)
 	if err != nil {
 		slog.Error("Erro ao iniciar o servidor web", "erro", err)
 		panic(err)
