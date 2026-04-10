@@ -17,10 +17,10 @@ func InitServer(
 	r.HandleFunc("GET /reviews", controllerReviews.ListAllReviews)
 	r.HandleFunc("GET /reviews/{id}", controllerReviews.FindReviewById)
 	r.HandleFunc("GET /reviews-home", controllerReviews.GetRandomReviews)
-	r.HandleFunc("POST /post-review", controllerReviews.CreateNewReview)
-	r.HandleFunc("PATCH /update-review/{id}", controllerReviews.UpdateReview)
-	r.HandleFunc("PUT /update-review/{id}", controllerReviews.UpdateReview)
-	r.HandleFunc("DELETE /remove-review/{id}", controllerReviews.ExceludeReview)
+	r.HandleFunc("POST /reviews", controllerReviews.CreateNewReview)
+	r.HandleFunc("PATCH /reviews/{id}", controllerReviews.UpdateReview)
+	r.HandleFunc("PUT /reviews/{id}", controllerReviews.UpdateReview)
+	r.HandleFunc("DELETE /review/{id}", controllerReviews.ExceludeReview)
 
 	err := http.ListenAndServe(":8080", r)
 	if err != nil {

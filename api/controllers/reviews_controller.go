@@ -7,14 +7,22 @@ import (
 	"strconv"
 
 	"github.com/murilosolino/challenge-backend-7/api/model"
-	"github.com/murilosolino/challenge-backend-7/api/services"
 )
 
-type ReviewsController struct {
-	svc services.ReviewService
+type IReviewService interface {
+	GetAllReviews() ([]model.ReviewsRow, error)
+	Get3RandomReviews() ([]model.ReviewsRow, error)
+	CreateReview(rev model.ReviewsRow) error
+	UpdateReview(id int, r map[string]interface{}) error
+	ExceludeReview(id int) error
+	SearchById(id int) (model.ReviewsRow, error)
 }
 
-func NewReviewController(svc services.ReviewService) *ReviewsController {
+type ReviewsController struct {
+	svc IReviewService
+}
+
+func NewReviewController(svc IReviewService) *ReviewsController {
 	return &ReviewsController{svc: svc}
 }
 
