@@ -10,7 +10,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 RUN go install github.com/go-delve/delve/cmd/dlv@latest \
-    && go install github.com/air-verse/air@latest
+    && go install github.com/air-verse/air@latest \
+    && go install -tags 'mysql' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
 WORKDIR /workspace
 

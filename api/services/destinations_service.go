@@ -1,0 +1,15 @@
+package services
+
+import "github.com/murilosolino/challenge-backend-7/api/model"
+
+type DestinationSvc struct {
+	dm model.DestinationModel
+}
+
+func NewDestinationSvc(dm model.DestinationModel) *DestinationSvc {
+	return &DestinationSvc{dm: dm}
+}
+
+func (svc *DestinationSvc) CreateDestination(d model.DestinationRow) error {
+	return svc.dm.Save(d)
+}

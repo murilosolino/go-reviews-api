@@ -11,10 +11,13 @@ import (
 func InitServer(
 	controllerReviews *controllers.ReviewsController,
 	conntrollerHc *controllers.HealthCheckController,
+	controllerDest *controllers.DestinationController,
 ) {
-
 	r := http.NewServeMux()
+
+	//HealthCheck
 	r.HandleFunc("GET /", conntrollerHc.HealthCheck)
+	//Reviews
 	r.HandleFunc("GET /reviews", controllerReviews.ListAllReviews)
 	r.HandleFunc("GET /reviews/{id}", controllerReviews.FindReviewById)
 	r.HandleFunc("GET /reviews-home", controllerReviews.GetRandomReviews)
@@ -22,6 +25,8 @@ func InitServer(
 	r.HandleFunc("PATCH /reviews/{id}", controllerReviews.UpdateReview)
 	r.HandleFunc("PUT /reviews/{id}", controllerReviews.UpdateReview)
 	r.HandleFunc("DELETE /review/{id}", controllerReviews.ExceludeReview)
+	//Destinations
+	r.HandleFunc("POST /destinations", controllerDest.CreateNewDestination)
 
 	var handler http.Handler = r
 	handler = middleware.CORSMiddleware(r)

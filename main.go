@@ -15,10 +15,13 @@ func main() {
 
 	controllerAny := deps["ReviewController"]()
 	controllerHealthCheck := deps["HealthCheckController"]()
+	controllerDestinations := deps["DestinationsController"]()
+
 	controller := controllerAny.(*controllers.ReviewsController)
 	controllerHC := controllerHealthCheck.(*controllers.HealthCheckController)
+	controllerDest := controllerDestinations.(*controllers.DestinationController)
 
 	slog.Info("iniciando o servidor")
-	router.InitServer(controller, controllerHC)
+	router.InitServer(controller, controllerHC, controllerDest)
 	slog.Info("Descendo o servidor")
 }

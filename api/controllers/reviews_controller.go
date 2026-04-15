@@ -9,7 +9,7 @@ import (
 	"github.com/murilosolino/challenge-backend-7/api/model"
 )
 
-type IReviewService interface {
+type IReviewSvc interface {
 	GetAllReviews() ([]model.ReviewsRow, error)
 	Get3RandomReviews() ([]model.ReviewsRow, error)
 	CreateReview(rev model.ReviewsRow) error
@@ -19,10 +19,10 @@ type IReviewService interface {
 }
 
 type ReviewsController struct {
-	svc IReviewService
+	svc IReviewSvc
 }
 
-func NewReviewController(svc IReviewService) *ReviewsController {
+func NewReviewController(svc IReviewSvc) *ReviewsController {
 	return &ReviewsController{svc: svc}
 }
 

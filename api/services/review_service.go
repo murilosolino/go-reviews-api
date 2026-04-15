@@ -7,39 +7,39 @@ import (
 	"github.com/murilosolino/challenge-backend-7/api/model"
 )
 
-type ReviewService struct {
+type ReviewSvc struct {
 	rm model.ReviewModel
 }
 
-func NewReviewService(rm model.ReviewModel) *ReviewService {
-	return &ReviewService{rm: rm}
+func NewReviewSvc(rm model.ReviewModel) *ReviewSvc {
+	return &ReviewSvc{rm: rm}
 }
 
-func (svc *ReviewService) GetAllReviews() ([]model.ReviewsRow, error) {
+func (svc *ReviewSvc) GetAllReviews() ([]model.ReviewsRow, error) {
 	return svc.rm.List()
 }
 
-func (svc *ReviewService) Get3RandomReviews() ([]model.ReviewsRow, error) {
+func (svc *ReviewSvc) Get3RandomReviews() ([]model.ReviewsRow, error) {
 	return svc.rm.FindRandomRegisters(3)
 }
 
-func (svc *ReviewService) CreateReview(rev model.ReviewsRow) error {
+func (svc *ReviewSvc) CreateReview(rev model.ReviewsRow) error {
 	return svc.rm.Save(rev)
 }
 
-func (svc *ReviewService) UpdateReview(id int, r map[string]interface{}) error {
+func (svc *ReviewSvc) UpdateReview(id int, r map[string]interface{}) error {
 	if len(r) == 0 {
 		err := fmt.Errorf("Nenhum campo enviado para a atualização")
-		slog.Error("[ReviewService][UpdateReview] " + err.Error())
+		slog.Error("[ReviewSvc][UpdateReview] " + err.Error())
 		return err
 	}
 	return svc.rm.Update(id, r)
 }
 
-func (svc *ReviewService) ExceludeReview(id int) error {
+func (svc *ReviewSvc) ExceludeReview(id int) error {
 	return svc.rm.Delete(id)
 }
 
-func (svc *ReviewService) SearchById(id int) (model.ReviewsRow, error) {
+func (svc *ReviewSvc) SearchById(id int) (model.ReviewsRow, error) {
 	return svc.rm.FindById(id)
 }

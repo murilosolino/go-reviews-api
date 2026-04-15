@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log/slog"
 	"strings"
+
+	"github.com/murilosolino/challenge-backend-7/api/apperrors"
 )
 
 type ReviewsRow struct {
@@ -82,7 +84,7 @@ func (m *ReviewModel) Save(r ReviewsRow) error {
 	}
 	_, err = stmt.Exec(r.Review, r.AuthorName, r.Url_photo)
 	if err != nil {
-		slog.Error("[DATBASE:ERROR][ReviewModel][Save()] Erro ao salvar registro", "error", err)
+		slog.Error("[DATBASE:ERROR][ReviewModel][Save()]"+apperrors.APP_ERR_SAVE_REGISTERS, "error", err)
 		return err
 	}
 	return nil
