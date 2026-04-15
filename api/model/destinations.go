@@ -47,6 +47,16 @@ func (d DestinationModel) List() ([]DestinationRow, error) {
 	return hydration(rows)
 }
 
+func (d DestinationModel) Exclude(id int) error {
+	query := "DELETE FROM " + tableName + " WHERE id = ?"
+	_, err := d.db.Exec(query, id)
+	if err != nil {
+		slog.Error("[DATABASE::ERROR][DestinationModel][Exclude()]"+apperrors.APP_ERR_DELETE_REGISTER, "error", err)
+		return err
+	}
+	return nil
+}
+
 func hydration(rows *sql.Rows) ([]DestinationRow, error) {
 	var d DestinationRow
 	var destinations []DestinationRow

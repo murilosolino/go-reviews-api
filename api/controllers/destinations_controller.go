@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
+	"strconv"
 
 	"github.com/murilosolino/challenge-backend-7/api/apperrors"
 	"github.com/murilosolino/challenge-backend-7/api/helper"
@@ -13,6 +14,7 @@ import (
 type IDestinationSvc interface {
 	CreateDestination(d model.DestinationRow) error
 	ListDestinations() ([]model.DestinationRow, error)
+	DeleteDestinationById(id int) error
 }
 
 type DestinationController struct {
@@ -27,7 +29,7 @@ func (c DestinationController) CreateNewDestination(w http.ResponseWriter, r *ht
 	var d model.DestinationRow
 	err := json.NewDecoder(r.Body).Decode(&d)
 	if err != nil {
-		slog.Error("[DestinationController][CreateNewDestination]"+apperrors.APP_ERR_BODY_DECODE, "error", err)
+		slog.Error("[DestinationController][CreateNewDestination()]"+apperrors.APP_ERR_BODY_DECODE, "error", err)
 		helper.ToJson(w, http.StatusUnprocessableEntity, apperrors.APP_ERR_BODY_DECODE, nil)
 		return
 	}
@@ -48,4 +50,22 @@ func (c DestinationController) ListAllDestinations(w http.ResponseWriter, r *htt
 	}
 
 	helper.ToJson(w, http.StatusOK, "ok", data)
+}
+
+func (c DestinationController) DeleteDestination(w http.ResponseWriter, r *http.Request) {
+	idStr := r.PathValue("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		slog.Error("[DestinationController][DeleteDestination()]", "error", err)
+		helper.ToJson(w, http.StatusInternalServerError, apperrors.APP_ERR_UNPROCESSABLE_REQ, nil)
+		return
+	}
+
+	err = c.svc.DeleteDestinationById(id)
+	if err != nil {
+		helper.ToJson(w, http.StatusInternalServerError, apperrors.APP_ERR_DELETE_REGISTER, nil)
+		return
+	}
+
+	helper.ToJson(w, http.StatusNoContent, "", nil)
 }

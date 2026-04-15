@@ -17,3 +17,7 @@ func (svc *DestinationSvc) CreateDestination(d model.DestinationRow) error {
 func (svc *DestinationSvc) ListDestinations() ([]model.DestinationRow, error) {
 	return svc.dm.List()
 }
+
+func (svc *DestinationSvc) DeleteDestinationById(id int) error {
+	return svc.dm.Exclude(id)
+}
