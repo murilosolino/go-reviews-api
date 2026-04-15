@@ -35,3 +35,33 @@ func (d DestinationModel) Save(destination DestinationRow) error {
 	}
 	return nil
 }
+
+func (d DestinationModel) List() ([]DestinationRow, error) {
+	query := "SELECT * FROM " + tableName
+
+	rows, err := d.db.Query(query)
+	if err != nil {
+		slog.Error("[DATABASE::ERROR][DestinationModel][List()]"+apperrors.APP_ERR_EXEC_QUERY, "error", err)
+		return nil, err
+	}
+	return hydration(rows)
+}
+
+func hydration(rows *sql.Rows) ([]DestinationRow, error) {
+	var d DestinationRow
+	var destinations []DestinationRow
+
+	for {
+		r := rows.Next()
+		if !r {
+			break
+		}
+		err := rows.Scan(&d.Id, &d.Img, &d.Name, &d.Price)
+		if err != nil {
+			slog.Error("[DATBASE:ERROR][DestinationModel][hydration()]"+apperrors.APP_ERR_SCAN_SQL_RESULT, "error", err)
+			return nil, err
+		}
+		destinations = append(destinations, d)
+	}
+	return destinations, nil
+}

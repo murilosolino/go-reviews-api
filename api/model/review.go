@@ -115,7 +115,7 @@ func (m *ReviewModel) hydration(rows *sql.Rows) ([]ReviewsRow, error) {
 		}
 		err := rows.Scan(&row.Id, &row.Review, &row.AuthorName, &row.Url_photo)
 		if err != nil {
-			slog.Error("[DATBASE:ERROR][ReviewModel][hydration()] Erro ao scanear resultados", "error", err)
+			slog.Error("[DATBASE:ERROR][ReviewModel][hydration()]"+apperrors.APP_ERR_SCAN_SQL_RESULT, "error", err)
 			return nil, err
 		}
 		result = append(result, row)

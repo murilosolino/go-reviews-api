@@ -13,3 +13,7 @@ func NewDestinationSvc(dm model.DestinationModel) *DestinationSvc {
 func (svc *DestinationSvc) CreateDestination(d model.DestinationRow) error {
 	return svc.dm.Save(d)
 }
+
+func (svc *DestinationSvc) ListDestinations() ([]model.DestinationRow, error) {
+	return svc.dm.List()
+}

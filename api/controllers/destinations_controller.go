@@ -12,6 +12,7 @@ import (
 
 type IDestinationSvc interface {
 	CreateDestination(d model.DestinationRow) error
+	ListDestinations() ([]model.DestinationRow, error)
 }
 
 type DestinationController struct {
@@ -37,4 +38,14 @@ func (c DestinationController) CreateNewDestination(w http.ResponseWriter, r *ht
 		return
 	}
 	helper.ToJson(w, http.StatusCreated, "", nil)
+}
+
+func (c DestinationController) ListAllDestinations(w http.ResponseWriter, r *http.Request) {
+	data, err := c.svc.ListDestinations()
+	if err != nil {
+		helper.ToJson(w, http.StatusInternalServerError, apperrors.APP_ERR_UNPROCESSABLE_REQ, nil)
+		return
+	}
+
+	helper.ToJson(w, http.StatusOK, "ok", data)
 }

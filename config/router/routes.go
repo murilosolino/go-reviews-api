@@ -27,6 +27,7 @@ func InitServer(
 	r.HandleFunc("DELETE /review/{id}", controllerReviews.ExceludeReview)
 	//Destinations
 	r.HandleFunc("POST /destinations", controllerDest.CreateNewDestination)
+	r.HandleFunc("GET /destinations", controllerDest.ListAllDestinations)
 
 	var handler http.Handler = r
 	handler = middleware.CORSMiddleware(r)
