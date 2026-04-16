@@ -17,44 +17,20 @@ type DestinationRow struct {
 }
 
 type DestinationModel struct {
-	db *sql.DB
+	Bm BaseModel
 }
 
-func NewDestinationModel(db *sql.DB) *DestinationModel {
-	return &DestinationModel{db: db}
+func NewDestinationModel(bm BaseModel) *DestinationModel {
+	bm.TableName = tableName
+	return &DestinationModel{Bm: bm}
 }
 
-func (d DestinationModel) Save(destination DestinationRow) error {
-	query := "INSERT INTO " + tableName +
-		" (img, name, price) VALUES (?,?,?)"
-
-	_, err := d.db.Exec(query, destination.Img, destination.Name, destination.Price)
+func (d *DestinationModel) ListAllDestinations() ([]DestinationRow, error) {
+	rows, err := d.Bm.List()
 	if err != nil {
-		slog.Error("[DATABASE::ERROR][DestinationModel][Save()]"+apperrors.APP_ERR_SAVE_REGISTERS, "error", err)
-		return err
-	}
-	return nil
-}
-
-func (d DestinationModel) List() ([]DestinationRow, error) {
-	query := "SELECT * FROM " + tableName
-
-	rows, err := d.db.Query(query)
-	if err != nil {
-		slog.Error("[DATABASE::ERROR][DestinationModel][List()]"+apperrors.APP_ERR_EXEC_QUERY, "error", err)
 		return nil, err
 	}
 	return hydration(rows)
-}
-
-func (d DestinationModel) Exclude(id int) error {
-	query := "DELETE FROM " + tableName + " WHERE id = ?"
-	_, err := d.db.Exec(query, id)
-	if err != nil {
-		slog.Error("[DATABASE::ERROR][DestinationModel][Exclude()]"+apperrors.APP_ERR_DELETE_REGISTER, "error", err)
-		return err
-	}
-	return nil
 }
 
 func hydration(rows *sql.Rows) ([]DestinationRow, error) {

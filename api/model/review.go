@@ -2,9 +2,7 @@ package model
 
 import (
 	"database/sql"
-	"fmt"
 	"log/slog"
-	"strings"
 
 	"github.com/murilosolino/challenge-backend-7/api/apperrors"
 )
@@ -17,18 +15,18 @@ type ReviewsRow struct {
 }
 
 type ReviewModel struct {
-	db *sql.DB
+	Bm BaseModel
 }
 
-func NewReviewModel(db *sql.DB) *ReviewModel {
-	return &ReviewModel{db: db}
+func NewReviewModel(bm BaseModel) *ReviewModel {
+	bm.TableName = "reviews"
+	return &ReviewModel{Bm: bm}
 }
 
 func (m *ReviewModel) List() ([]ReviewsRow, error) {
-
-	rows, err := m.db.Query("SELECT * FROM reviews")
+	rows, err := m.Bm.List()
 	if err != nil {
-		slog.Error("[DATBASE:ERROR][ReviewModel][List()] Erro ao realizar consulta", "error", err)
+		slog.Error("[DATBASE:ERROR][ReviewModel][List()]"+apperrors.APP_ERR_BUILD_STMT, "error", err)
 		return nil, err
 	}
 	return m.hydration(rows)
@@ -36,9 +34,9 @@ func (m *ReviewModel) List() ([]ReviewsRow, error) {
 
 func (m *ReviewModel) FindById(id int) (ReviewsRow, error) {
 	var result ReviewsRow
-	stmt, err := m.db.Prepare("SELECT * FROM reviews WHERE id = ?")
+	stmt, err := m.Bm.db.Prepare("SELECT * FROM reviews WHERE id = ?")
 	if err != nil {
-		slog.Error("[DATBASE:ERROR][ReviewModel][FindById()] Erro ao montar statment", "error", err)
+		slog.Error("[DATBASE:ERROR][ReviewModel][FindById()]"+apperrors.APP_ERR_BUILD_STMT, "error", err)
 		return ReviewsRow{}, err
 	}
 
@@ -48,61 +46,12 @@ func (m *ReviewModel) FindById(id int) (ReviewsRow, error) {
 }
 
 func (m *ReviewModel) FindRandomRegisters(limit int) ([]ReviewsRow, error) {
-	rows, err := m.db.Query("SELECT * FROM reviews ORDER BY RAND() LIMIT ?", limit)
+	rows, err := m.Bm.db.Query("SELECT * FROM reviews ORDER BY RAND() LIMIT ?", limit)
 	if err != nil {
-		slog.Error("[DATBASE:ERROR][ReviewModel][FindRandomRegisters()] Erro ao realizar consulta", "error", err)
+		slog.Error("[DATBASE:ERROR][ReviewModel][FindRandomRegisters()]"+apperrors.APP_ERR_EXEC_QUERY, "error", err)
 		return nil, err
 	}
 	return m.hydration(rows)
-}
-
-func (m *ReviewModel) Update(id int, r map[string]interface{}) error {
-	query := "UPDATE reviews SET "
-	var values []any
-
-	for k, v := range r {
-		query += fmt.Sprintf("%s = ?, ", k)
-		values = append(values, v)
-	}
-
-	query = strings.TrimSuffix(query, ", ") + " WHERE id = ?"
-	values = append(values, id)
-	fmt.Println(query)
-	_, err := m.db.Exec(query, values...)
-	if err != nil {
-		slog.Error("[DATBASE:ERROR][ReviewModel][Update()] Erro ao atualizar registro", "error", err)
-		return err
-	}
-	return nil
-}
-
-func (m *ReviewModel) Save(r ReviewsRow) error {
-	stmt, err := m.db.Prepare("INSERT INTO reviews (review, author_name, url_photo) VALUES (?,?,?)")
-	if err != nil {
-		slog.Error("[DATBASE:ERROR][ReviewModel][Save()] Erro ao montar statment", "error", err)
-		return err
-	}
-	_, err = stmt.Exec(r.Review, r.AuthorName, r.Url_photo)
-	if err != nil {
-		slog.Error("[DATBASE:ERROR][ReviewModel][Save()]"+apperrors.APP_ERR_SAVE_REGISTERS, "error", err)
-		return err
-	}
-	return nil
-}
-
-func (m *ReviewModel) Delete(id int) error {
-	stmt, err := m.db.Prepare("DELETE FROM reviews WHERE id = ?")
-	if err != nil {
-		slog.Error("[DATBASE:ERROR][ReviewModel][Delete()] Erro ao montar statment", "error", err)
-		return err
-	}
-
-	_, err = stmt.Exec(id)
-	if err != nil {
-		slog.Error("[DATBASE:ERROR][ReviewModel][Save()] Erro ao deletar registro", "error", err)
-		return err
-	}
-	return nil
 }
 
 func (m *ReviewModel) hydration(rows *sql.Rows) ([]ReviewsRow, error) {

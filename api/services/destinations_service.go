@@ -10,14 +10,18 @@ func NewDestinationSvc(dm model.DestinationModel) *DestinationSvc {
 	return &DestinationSvc{dm: dm}
 }
 
-func (svc *DestinationSvc) CreateDestination(d model.DestinationRow) error {
-	return svc.dm.Save(d)
+func (svc *DestinationSvc) CreateDestination(m map[string]interface{}) error {
+	return svc.dm.Bm.Save(m)
 }
 
 func (svc *DestinationSvc) ListDestinations() ([]model.DestinationRow, error) {
-	return svc.dm.List()
+	return svc.dm.ListAllDestinations()
 }
 
 func (svc *DestinationSvc) DeleteDestinationById(id int) error {
-	return svc.dm.Exclude(id)
+	return svc.dm.Bm.Exclude(id)
+}
+
+func (svc *DestinationSvc) UpdateDestination(id int, m map[string]interface{}) error {
+	return svc.dm.Bm.Update(id, m)
 }

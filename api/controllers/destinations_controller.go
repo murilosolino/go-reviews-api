@@ -12,9 +12,10 @@ import (
 )
 
 type IDestinationSvc interface {
-	CreateDestination(d model.DestinationRow) error
+	CreateDestination(m map[string]interface{}) error
 	ListDestinations() ([]model.DestinationRow, error)
 	DeleteDestinationById(id int) error
+	UpdateDestination(id int, m map[string]interface{}) error
 }
 
 type DestinationController struct {
@@ -26,15 +27,15 @@ func NewDestinationController(svc IDestinationSvc) *DestinationController {
 }
 
 func (c DestinationController) CreateNewDestination(w http.ResponseWriter, r *http.Request) {
-	var d model.DestinationRow
-	err := json.NewDecoder(r.Body).Decode(&d)
+	m := make(map[string]interface{})
+	err := json.NewDecoder(r.Body).Decode(&m)
 	if err != nil {
 		slog.Error("[DestinationController][CreateNewDestination()]"+apperrors.APP_ERR_BODY_DECODE, "error", err)
 		helper.ToJson(w, http.StatusUnprocessableEntity, apperrors.APP_ERR_BODY_DECODE, nil)
 		return
 	}
 
-	err = c.svc.CreateDestination(d)
+	err = c.svc.CreateDestination(m)
 	if err != nil {
 		helper.ToJson(w, http.StatusInternalServerError, apperrors.APP_ERR_UNPROCESSABLE_REQ, nil)
 		return
@@ -62,6 +63,26 @@ func (c DestinationController) DeleteDestination(w http.ResponseWriter, r *http.
 	}
 
 	err = c.svc.DeleteDestinationById(id)
+	if err != nil {
+		helper.ToJson(w, http.StatusInternalServerError, apperrors.APP_ERR_DELETE_REGISTER, nil)
+		return
+	}
+
+	helper.ToJson(w, http.StatusNoContent, "", nil)
+}
+
+func (c DestinationController) UpdateDestination(w http.ResponseWriter, r *http.Request) {
+	m := make(map[string]interface{})
+	idStr := r.PathValue("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		slog.Error("[DestinationController][DeleteDestination()]", "error", err)
+		helper.ToJson(w, http.StatusInternalServerError, apperrors.APP_ERR_UNPROCESSABLE_REQ, nil)
+		return
+	}
+
+	json.NewDecoder(r.Body).Decode(&m)
+	err = c.svc.UpdateDestination(id, m)
 	if err != nil {
 		helper.ToJson(w, http.StatusInternalServerError, apperrors.APP_ERR_DELETE_REGISTER, nil)
 		return

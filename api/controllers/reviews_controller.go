@@ -12,7 +12,7 @@ import (
 type IReviewSvc interface {
 	GetAllReviews() ([]model.ReviewsRow, error)
 	Get3RandomReviews() ([]model.ReviewsRow, error)
-	CreateReview(rev model.ReviewsRow) error
+	CreateReview(rev map[string]interface{}) error
 	UpdateReview(id int, r map[string]interface{}) error
 	ExceludeReview(id int) error
 	SearchById(id int) (model.ReviewsRow, error)
@@ -81,7 +81,7 @@ func (c *ReviewsController) GetRandomReviews(w http.ResponseWriter, r *http.Requ
 }
 
 func (c *ReviewsController) CreateNewReview(w http.ResponseWriter, r *http.Request) {
-	var rev model.ReviewsRow
+	var rev map[string]interface{}
 	json.NewDecoder(r.Body).Decode(&rev)
 
 	err := c.svc.CreateReview(rev)

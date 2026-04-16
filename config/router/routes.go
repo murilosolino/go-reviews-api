@@ -24,11 +24,12 @@ func InitServer(
 	r.HandleFunc("POST /reviews", controllerReviews.CreateNewReview)
 	r.HandleFunc("PATCH /reviews/{id}", controllerReviews.UpdateReview)
 	r.HandleFunc("PUT /reviews/{id}", controllerReviews.UpdateReview)
-	r.HandleFunc("DELETE /review/{id}", controllerReviews.ExceludeReview)
+	r.HandleFunc("DELETE /reviews/{id}", controllerReviews.ExceludeReview)
 	//Destinations
 	r.HandleFunc("POST /destinations", controllerDest.CreateNewDestination)
 	r.HandleFunc("GET /destinations", controllerDest.ListAllDestinations)
 	r.HandleFunc("DELETE /destinations/{id}", controllerDest.DeleteDestination)
+	r.HandleFunc("PUT /destinations/{id}", controllerDest.UpdateDestination)
 
 	var handler http.Handler = r
 	handler = middleware.CORSMiddleware(r)

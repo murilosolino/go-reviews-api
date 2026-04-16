@@ -22,7 +22,7 @@ func (m MockService) Get3RandomReviews() ([]model.ReviewsRow, error) {
 	return nil, nil
 }
 
-func (m MockService) CreateReview(rev model.ReviewsRow) error {
+func (m MockService) CreateReview(rev map[string]interface{}) error {
 	return nil
 }
 

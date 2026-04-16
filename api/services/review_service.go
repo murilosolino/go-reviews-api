@@ -23,8 +23,8 @@ func (svc *ReviewSvc) Get3RandomReviews() ([]model.ReviewsRow, error) {
 	return svc.rm.FindRandomRegisters(3)
 }
 
-func (svc *ReviewSvc) CreateReview(rev model.ReviewsRow) error {
-	return svc.rm.Save(rev)
+func (svc *ReviewSvc) CreateReview(rev map[string]interface{}) error {
+	return svc.rm.Bm.Save(rev)
 }
 
 func (svc *ReviewSvc) UpdateReview(id int, r map[string]interface{}) error {
@@ -33,11 +33,11 @@ func (svc *ReviewSvc) UpdateReview(id int, r map[string]interface{}) error {
 		slog.Error("[ReviewSvc][UpdateReview] " + err.Error())
 		return err
 	}
-	return svc.rm.Update(id, r)
+	return svc.rm.Bm.Update(id, r)
 }
 
 func (svc *ReviewSvc) ExceludeReview(id int) error {
-	return svc.rm.Delete(id)
+	return svc.rm.Bm.Exclude(id)
 }
 
 func (svc *ReviewSvc) SearchById(id int) (model.ReviewsRow, error) {
