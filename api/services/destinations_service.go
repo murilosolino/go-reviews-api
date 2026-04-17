@@ -14,6 +14,10 @@ func (svc *DestinationSvc) CreateDestination(m map[string]interface{}) error {
 	return svc.dm.Bm.Save(m)
 }
 
+func (svc *DestinationSvc) FindByName(name string) (model.DestinationRow, error) {
+	return svc.dm.FindByName(name)
+}
+
 func (svc *DestinationSvc) ListDestinations() ([]model.DestinationRow, error) {
 	return svc.dm.ListAllDestinations()
 }

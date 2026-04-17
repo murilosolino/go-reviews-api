@@ -16,6 +16,7 @@ type IDestinationSvc interface {
 	ListDestinations() ([]model.DestinationRow, error)
 	DeleteDestinationById(id int) error
 	UpdateDestination(id int, m map[string]interface{}) error
+	FindByName(name string) (model.DestinationRow, error)
 }
 
 type DestinationController struct {
@@ -44,6 +45,18 @@ func (c DestinationController) CreateNewDestination(w http.ResponseWriter, r *ht
 }
 
 func (c DestinationController) ListAllDestinations(w http.ResponseWriter, r *http.Request) {
+	destName := r.URL.Query().Get("name")
+	if destName != "" {
+		data, err := c.svc.FindByName(destName)
+		if err != nil {
+			helper.ToJson(w, http.StatusInternalServerError, apperrors.APP_ERR_UNPROCESSABLE_REQ, nil)
+			return
+		}
+
+		helper.ToJson(w, http.StatusOK, "ok", data)
+		return
+	}
+
 	data, err := c.svc.ListDestinations()
 	if err != nil {
 		helper.ToJson(w, http.StatusInternalServerError, apperrors.APP_ERR_UNPROCESSABLE_REQ, nil)

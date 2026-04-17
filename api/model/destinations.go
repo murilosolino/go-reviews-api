@@ -33,6 +33,17 @@ func (d *DestinationModel) ListAllDestinations() ([]DestinationRow, error) {
 	return hydration(rows)
 }
 
+func (d *DestinationModel) FindByName(name string) (DestinationRow, error) {
+	var destination DestinationRow
+	row := d.Bm.db.QueryRow("SELECT * FROM "+tableName+" WHERE name = ?", name)
+	err := row.Scan(&destination.Id, &destination.Img, &destination.Name, &destination.Price)
+	if err != nil {
+		slog.Error("[DATBASE:ERROR][DestinationModel][hydration()]"+apperrors.APP_ERR_SCAN_SQL_RESULT, "error", err)
+		return DestinationRow{}, err
+	}
+	return destination, nil
+}
+
 func hydration(rows *sql.Rows) ([]DestinationRow, error) {
 	var d DestinationRow
 	var destinations []DestinationRow
