@@ -14,28 +14,48 @@ import (
 
 type MockService struct{}
 
-func (m MockService) GetAllReviews() ([]model.ReviewsRow, error) {
+func (ms MockService) GetAllReviews() ([]model.ReviewsRow, error) {
 	return nil, nil
 }
 
-func (m MockService) Get3RandomReviews() ([]model.ReviewsRow, error) {
+func (ms MockService) Get3RandomReviews() ([]model.ReviewsRow, error) {
 	return nil, nil
 }
 
-func (m MockService) CreateReview(rev map[string]interface{}) error {
+func (ms MockService) CreateReview(rev map[string]interface{}) error {
 	return nil
 }
 
-func (m MockService) UpdateReview(id int, r map[string]interface{}) error {
+func (ms MockService) UpdateReview(id int, r map[string]interface{}) error {
 	return nil
 }
 
-func (m MockService) ExceludeReview(id int) error {
+func (ms MockService) ExceludeReview(id int) error {
 	return nil
 }
 
-func (m MockService) SearchById(id int) (model.ReviewsRow, error) {
+func (ms MockService) SearchById(id int) (model.ReviewsRow, error) {
 	return model.ReviewsRow{}, nil
+}
+
+func (ms MockService) CreateDestination(m map[string]interface{}) error {
+	return nil
+}
+
+func (ms MockService) ListDestinations() ([]model.DestinationRow, error) {
+	return nil, nil
+}
+
+func (ms MockService) DeleteDestinationById(id int) error {
+	return nil
+}
+
+func (ms MockService) UpdateDestination(id int, m map[string]interface{}) error {
+	return nil
+}
+
+func (ms MockService) FindByName(name string) (model.DestinationRow, error) {
+	return model.DestinationRow{}, nil
 }
 
 var flagtests = []struct {
@@ -53,11 +73,17 @@ var flagtests = []struct {
 	{"PUT /reviews/{id}", "/reviews/1", "PUT", map[string]any{"review": "atualizado"}, http.StatusNoContent},
 	{"PATCH /reviews/{id}", "/reviews/1", "PATCH", map[string]any{"author_name": "novo nome"}, http.StatusNoContent},
 	{"DELETE /review/{id}", "/review/1", "DELETE", nil, http.StatusNoContent},
+
+	{"GET /destinations", "/destinations", "GET", nil, http.StatusOK},
+	{"POST /reviews", "/reviews", "POST", map[string]any{"img": nil, "name": "São Paulo", "price": 1000}, http.StatusCreated},
+	{"PUT /destinations/{id}", "/destinations/1", "PUT", map[string]any{"name": "Paris"}, http.StatusNoContent},
+	{"DELETE /destinations/{id}", "/destinations/1", "DELETE", nil, http.StatusNoContent},
 }
 
 func setupRouter() *http.ServeMux {
 	reviewController := controllers.NewReviewController(MockService{})
 	hcController := controllers.NewHealthCheck()
+	controllerDest := controllers.NewDestinationController(MockService{})
 
 	r := http.NewServeMux()
 	r.HandleFunc("GET /", hcController.HealthCheck)
@@ -68,6 +94,11 @@ func setupRouter() *http.ServeMux {
 	r.HandleFunc("PUT /reviews/{id}", reviewController.UpdateReview)
 	r.HandleFunc("PATCH /reviews/{id}", reviewController.UpdateReview)
 	r.HandleFunc("DELETE /review/{id}", reviewController.ExceludeReview)
+
+	r.HandleFunc("POST /destinations", controllerDest.CreateNewDestination)
+	r.HandleFunc("GET /destinations", controllerDest.ListAllDestinations)
+	r.HandleFunc("DELETE /destinations/{id}", controllerDest.DeleteDestination)
+	r.HandleFunc("PUT /destinations/{id}", controllerDest.UpdateDestination)
 
 	return r
 }
