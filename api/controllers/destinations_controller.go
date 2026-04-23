@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"strconv"
@@ -17,6 +18,7 @@ type IDestinationSvc interface {
 	DeleteDestinationById(id int) error
 	UpdateDestination(id int, m map[string]interface{}) error
 	FindByName(name string) (model.DestinationRow, error)
+	GenerateIADescriptiveText(destination string) string
 }
 
 type DestinationController struct {
@@ -28,12 +30,17 @@ func NewDestinationController(svc IDestinationSvc) *DestinationController {
 }
 
 func (c DestinationController) CreateNewDestination(w http.ResponseWriter, r *http.Request) {
-	m := make(map[string]interface{})
+	m := map[string]any{}
 	err := json.NewDecoder(r.Body).Decode(&m)
 	if err != nil {
 		slog.Error("[DestinationController][CreateNewDestination()]"+apperrors.APP_ERR_BODY_DECODE, "error", err)
 		helper.ToJson(w, http.StatusUnprocessableEntity, apperrors.APP_ERR_BODY_DECODE, nil)
 		return
+	}
+
+	if m["descriptive_text"] == nil {
+		destination := fmt.Sprintf("%v", m["name"])
+		m["descriptive_text"] = c.svc.GenerateIADescriptiveText(destination)
 	}
 
 	err = c.svc.CreateDestination(m)

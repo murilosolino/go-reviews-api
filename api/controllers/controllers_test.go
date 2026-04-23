@@ -58,6 +58,10 @@ func (ms MockService) FindByName(name string) (model.DestinationRow, error) {
 	return model.DestinationRow{}, nil
 }
 
+func (ms MockService) GenerateIADescriptiveText(destination string) string {
+	return ""
+}
+
 var flagtests = []struct {
 	name       string
 	endpoint   string

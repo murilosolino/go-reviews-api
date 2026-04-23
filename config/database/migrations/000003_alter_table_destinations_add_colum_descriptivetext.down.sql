@@ -1,0 +1,1 @@
+ALTER TABLE destinations DROP COLUMN descriptive_text;

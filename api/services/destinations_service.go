@@ -1,13 +1,29 @@
 package services
 
-import "github.com/murilosolino/challenge-backend-7/api/model"
+import (
+	"context"
+	"log/slog"
+	"os"
+
+	"github.com/murilosolino/challenge-backend-7/api/model"
+	openai "github.com/openai/openai-go/v3"
+	"github.com/openai/openai-go/v3/option"
+	"github.com/openai/openai-go/v3/responses"
+)
 
 type DestinationSvc struct {
-	dm model.DestinationModel
+	dm           model.DestinationModel
+	openIAClient openai.Client
 }
 
 func NewDestinationSvc(dm model.DestinationModel) *DestinationSvc {
-	return &DestinationSvc{dm: dm}
+	opts := []option.RequestOption{}
+	if apiKey := os.Getenv("OPENAI_API_KEY"); apiKey != "" {
+		opts = append(opts, option.WithAPIKey(apiKey))
+	}
+	client := openai.NewClient(opts...)
+
+	return &DestinationSvc{dm: dm, openIAClient: client}
 }
 
 func (svc *DestinationSvc) CreateDestination(m map[string]interface{}) error {
@@ -28,4 +44,19 @@ func (svc *DestinationSvc) DeleteDestinationById(id int) error {
 
 func (svc *DestinationSvc) UpdateDestination(id int, m map[string]interface{}) error {
 	return svc.dm.Bm.Update(id, m)
+}
+
+func (svc *DestinationSvc) GenerateIADescriptiveText(destination string) string {
+	prompt := "Escreva um texto descritivo de até 150 caracteres sobre o destino: " + destination + ". A resposta deve conter apenas o texto gerado"
+
+	resp, err := svc.openIAClient.Responses.New(context.TODO(), responses.ResponseNewParams{
+		Model: openai.ChatModelGPT5Nano,
+		Input: responses.ResponseNewParamsInputUnion{OfString: openai.String(prompt)},
+	})
+	if err != nil {
+		slog.Error("[OPENAI] Falha ao gerar descriptive_text", "erro", err)
+		return ""
+	}
+
+	return resp.OutputText()
 }

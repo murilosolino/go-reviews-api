@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"log/slog"
@@ -48,11 +49,15 @@ func CreateConnection() {
 	}
 	err = m.Up()
 	if err != nil {
-		slog.Info(err.Error())
-	} else {
-
-		slog.Info("[DATABASE] Migration realizada com sucesso", "db", cfg.DBName)
+		if errors.Is(err, migrate.ErrNoChange) {
+			slog.Info("[DATABASE] Nenhuma migration pendente", "db", cfg.DBName)
+			return
+		}
+		slog.Error("[DATABASE] Falha ao executar migrations", "erro", err)
+		log.Fatal(err)
 	}
+
+	slog.Info("[DATABASE] Migration realizada com sucesso", "db", cfg.DBName)
 }
 
 func GetConnection() *sql.DB {

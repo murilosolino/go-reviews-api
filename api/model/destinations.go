@@ -10,10 +10,11 @@ import (
 const tableName = "destinations"
 
 type DestinationRow struct {
-	Id    int     `json:"id"`
-	Img   *string `json:"image"`
-	Name  string  `json:"name"`
-	Price float64 `json:"price"`
+	Id              int     `json:"id"`
+	Img             *string `json:"image"`
+	Name            string  `json:"name"`
+	Price           float64 `json:"price"`
+	DescriptiveText *string `json:"descriptive_text"`
 }
 
 type DestinationModel struct {
@@ -36,7 +37,7 @@ func (d *DestinationModel) ListAllDestinations() ([]DestinationRow, error) {
 func (d *DestinationModel) FindByName(name string) (DestinationRow, error) {
 	var destination DestinationRow
 	row := d.Bm.db.QueryRow("SELECT * FROM "+tableName+" WHERE name = ?", name)
-	err := row.Scan(&destination.Id, &destination.Img, &destination.Name, &destination.Price)
+	err := row.Scan(&destination.Id, &destination.Img, &destination.Name, &destination.Price, &destination.DescriptiveText)
 	if err != nil {
 		slog.Error("[DATBASE:ERROR][DestinationModel][hydration()]"+apperrors.APP_ERR_SCAN_SQL_RESULT, "error", err)
 		return DestinationRow{}, err
@@ -53,7 +54,7 @@ func hydration(rows *sql.Rows) ([]DestinationRow, error) {
 		if !r {
 			break
 		}
-		err := rows.Scan(&d.Id, &d.Img, &d.Name, &d.Price)
+		err := rows.Scan(&d.Id, &d.Img, &d.Name, &d.Price, &d.DescriptiveText)
 		if err != nil {
 			slog.Error("[DATBASE:ERROR][DestinationModel][hydration()]"+apperrors.APP_ERR_SCAN_SQL_RESULT, "error", err)
 			return nil, err
