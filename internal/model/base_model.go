@@ -6,7 +6,7 @@ import (
 	"log/slog"
 	"strings"
 
-	"github.com/murilosolino/challenge-backend-7/api/apperrors"
+	"github.com/murilosolino/challenge-backend-7/internal/apperrors"
 )
 
 type BaseModel struct {

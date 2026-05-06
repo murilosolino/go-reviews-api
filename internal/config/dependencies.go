@@ -1,10 +1,10 @@
 package dependencies
 
 import (
-	"github.com/murilosolino/challenge-backend-7/api/controllers"
-	"github.com/murilosolino/challenge-backend-7/api/model"
-	"github.com/murilosolino/challenge-backend-7/api/services"
-	"github.com/murilosolino/challenge-backend-7/config/database"
+	"github.com/murilosolino/challenge-backend-7/internal/config/database"
+	"github.com/murilosolino/challenge-backend-7/internal/controllers"
+	"github.com/murilosolino/challenge-backend-7/internal/model"
+	"github.com/murilosolino/challenge-backend-7/internal/services"
 )
 
 var dependencies map[string]func() any = map[string]func() any{

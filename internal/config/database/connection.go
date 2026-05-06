@@ -42,7 +42,7 @@ func CreateConnection() {
 		log.Fatal(err)
 	}
 	m, err := migrate.NewWithDatabaseInstance(
-		"file://./config/database/migrations",
+		"file://./internal/config/database/migrations",
 		"mysql", driver)
 	if err != nil {
 		log.Fatal(err)

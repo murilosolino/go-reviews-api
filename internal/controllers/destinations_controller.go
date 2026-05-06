@@ -7,17 +7,18 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/murilosolino/challenge-backend-7/api/apperrors"
-	"github.com/murilosolino/challenge-backend-7/api/helper"
-	"github.com/murilosolino/challenge-backend-7/api/model"
+	"github.com/murilosolino/challenge-backend-7/internal/apperrors"
+	"github.com/murilosolino/challenge-backend-7/internal/dto"
+	"github.com/murilosolino/challenge-backend-7/internal/helper"
+	"github.com/murilosolino/challenge-backend-7/internal/validations"
 )
 
 type IDestinationSvc interface {
 	CreateDestination(m map[string]interface{}) error
-	ListDestinations() ([]model.DestinationRow, error)
+	ListDestinations() ([]dto.Destination, error)
 	DeleteDestinationById(id int) error
 	UpdateDestination(id int, m map[string]interface{}) error
-	FindByName(name string) (model.DestinationRow, error)
+	FindByName(name string) (dto.Destination, error)
 	GenerateIADescriptiveText(destination string) string
 }
 
@@ -35,6 +36,16 @@ func (c DestinationController) CreateNewDestination(w http.ResponseWriter, r *ht
 	if err != nil {
 		slog.Error("[DestinationController][CreateNewDestination()]"+apperrors.APP_ERR_BODY_DECODE, "error", err)
 		helper.ToJson(w, http.StatusUnprocessableEntity, apperrors.APP_ERR_BODY_DECODE, nil)
+		return
+	}
+
+	jsonBytes, _ := json.Marshal(m)
+	var destination dto.Destination
+	_ = json.Unmarshal(jsonBytes, &destination)
+
+	err = validations.ValidateDestination(destination)
+	if err != nil {
+		helper.ToJson(w, http.StatusUnprocessableEntity, err.Error(), nil)
 		return
 	}
 
@@ -93,6 +104,22 @@ func (c DestinationController) DeleteDestination(w http.ResponseWriter, r *http.
 
 func (c DestinationController) UpdateDestination(w http.ResponseWriter, r *http.Request) {
 	m := make(map[string]interface{})
+	err := json.NewDecoder(r.Body).Decode(&m)
+	if err != nil {
+		helper.ToJson(w, http.StatusUnprocessableEntity, apperrors.APP_ERR_BODY_DECODE, nil)
+		return
+	}
+
+	jsonBytes, _ := json.Marshal(m)
+	var destination dto.Destination
+	_ = json.Unmarshal(jsonBytes, &destination)
+
+	err = validations.ValidateDestination(destination)
+	if err != nil {
+		helper.ToJson(w, http.StatusUnprocessableEntity, err.Error(), nil)
+		return
+	}
+
 	idStr := r.PathValue("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -101,7 +128,6 @@ func (c DestinationController) UpdateDestination(w http.ResponseWriter, r *http.
 		return
 	}
 
-	json.NewDecoder(r.Body).Decode(&m)
 	err = c.svc.UpdateDestination(id, m)
 	if err != nil {
 		helper.ToJson(w, http.StatusInternalServerError, apperrors.APP_ERR_DELETE_REGISTER, nil)
