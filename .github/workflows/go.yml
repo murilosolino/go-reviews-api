@@ -1,0 +1,33 @@
+name: Go
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.25'
+
+    - name: Start services (Docker Compose)
+      run: docker compose up -d --build
+
+    - name: Wait for services to be ready
+      run: sleep 25
+
+    - name: CI (Build, Lint e Testes)
+      run: |
+        go build -v ./...
+        make ci
+        
+    - name: Stop services
+      if: always()
+      run: make down
