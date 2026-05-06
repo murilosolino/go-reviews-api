@@ -3,15 +3,15 @@ package main
 import (
 	"log/slog"
 
-	"github.com/murilosolino/challenge-backend-7/api/controllers"
-	dependencies "github.com/murilosolino/challenge-backend-7/config"
-	"github.com/murilosolino/challenge-backend-7/config/database"
-	"github.com/murilosolino/challenge-backend-7/config/router"
+	dependencies "github.com/murilosolino/challenge-backend-7/internal/config"
+	"github.com/murilosolino/challenge-backend-7/internal/config/database"
+	"github.com/murilosolino/challenge-backend-7/internal/config/router"
+	"github.com/murilosolino/challenge-backend-7/internal/controllers"
 )
 
 func main() {
 	database.CreateConnection()
-	var deps map[string]func() any = dependencies.LoadDependencies()
+	deps := dependencies.LoadDependencies()
 
 	controllerAny := deps["ReviewController"]()
 	controllerHealthCheck := deps["HealthCheckController"]()

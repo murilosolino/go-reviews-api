@@ -5,7 +5,8 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/murilosolino/challenge-backend-7/api/model"
+	"github.com/murilosolino/challenge-backend-7/internal/dto"
+	"github.com/murilosolino/challenge-backend-7/internal/model"
 	openai "github.com/openai/openai-go/v3"
 	"github.com/openai/openai-go/v3/option"
 	"github.com/openai/openai-go/v3/responses"
@@ -18,8 +19,8 @@ type DestinationSvc struct {
 
 func NewDestinationSvc(dm model.DestinationModel) *DestinationSvc {
 	opts := []option.RequestOption{}
-	if apiKey := os.Getenv("OPENAI_API_KEY"); apiKey != "" {
-		opts = append(opts, option.WithAPIKey(apiKey))
+	if internalKey := os.Getenv("OPENAI_internal_KEY"); internalKey != "" {
+		opts = append(opts, option.WithAPIKey(internalKey))
 	}
 	client := openai.NewClient(opts...)
 
@@ -30,11 +31,11 @@ func (svc *DestinationSvc) CreateDestination(m map[string]interface{}) error {
 	return svc.dm.Bm.Save(m)
 }
 
-func (svc *DestinationSvc) FindByName(name string) (model.DestinationRow, error) {
+func (svc *DestinationSvc) FindByName(name string) (dto.Destination, error) {
 	return svc.dm.FindByName(name)
 }
 
-func (svc *DestinationSvc) ListDestinations() ([]model.DestinationRow, error) {
+func (svc *DestinationSvc) ListDestinations() ([]dto.Destination, error) {
 	return svc.dm.ListAllDestinations()
 }
 

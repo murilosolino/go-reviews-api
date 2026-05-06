@@ -4,8 +4,8 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/murilosolino/challenge-backend-7/api/controllers"
-	"github.com/murilosolino/challenge-backend-7/api/middleware"
+	"github.com/murilosolino/challenge-backend-7/internal/controllers"
+	"github.com/murilosolino/challenge-backend-7/internal/middleware"
 )
 
 func InitServer(
@@ -31,10 +31,9 @@ func InitServer(
 	r.HandleFunc("DELETE /destinations/{id}", controllerDest.DeleteDestination)
 	r.HandleFunc("PUT /destinations/{id}", controllerDest.UpdateDestination)
 
-	var handler http.Handler = r
-	handler = middleware.CORSMiddleware(r)
+	h := middleware.CORSMiddleware(r)
 
-	err := http.ListenAndServe(":8080", handler)
+	err := http.ListenAndServe(":8080", h)
 	if err != nil {
 		slog.Error("Erro ao iniciar o servidor web", "erro", err)
 		panic(err)

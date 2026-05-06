@@ -30,4 +30,4 @@ jobs:
         docker compose exec app go test ./...   
     - name: Stop services
       if: always()
-      run: make down
+      run: docker compose down

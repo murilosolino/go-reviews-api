@@ -8,17 +8,17 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/murilosolino/challenge-backend-7/api/controllers"
-	"github.com/murilosolino/challenge-backend-7/api/model"
+	"github.com/murilosolino/challenge-backend-7/internal/controllers"
+	"github.com/murilosolino/challenge-backend-7/internal/dto"
 )
 
 type MockService struct{}
 
-func (ms MockService) GetAllReviews() ([]model.ReviewsRow, error) {
+func (ms MockService) GetAllReviews() ([]dto.Review, error) {
 	return nil, nil
 }
 
-func (ms MockService) Get3RandomReviews() ([]model.ReviewsRow, error) {
+func (ms MockService) Get3RandomReviews() ([]dto.Review, error) {
 	return nil, nil
 }
 
@@ -34,15 +34,15 @@ func (ms MockService) ExceludeReview(id int) error {
 	return nil
 }
 
-func (ms MockService) SearchById(id int) (model.ReviewsRow, error) {
-	return model.ReviewsRow{}, nil
+func (ms MockService) SearchById(id int) (dto.Review, error) {
+	return dto.Review{}, nil
 }
 
 func (ms MockService) CreateDestination(m map[string]interface{}) error {
 	return nil
 }
 
-func (ms MockService) ListDestinations() ([]model.DestinationRow, error) {
+func (ms MockService) ListDestinations() ([]dto.Destination, error) {
 	return nil, nil
 }
 
@@ -54,8 +54,8 @@ func (ms MockService) UpdateDestination(id int, m map[string]interface{}) error 
 	return nil
 }
 
-func (ms MockService) FindByName(name string) (model.DestinationRow, error) {
-	return model.DestinationRow{}, nil
+func (ms MockService) FindByName(name string) (dto.Destination, error) {
+	return dto.Destination{}, nil
 }
 
 func (ms MockService) GenerateIADescriptiveText(destination string) string {
@@ -74,13 +74,13 @@ var flagtests = []struct {
 	{"GET /reviews/{id}", "/reviews/1", "GET", nil, http.StatusOK},
 	{"GET /reviews-home", "/reviews-home", "GET", nil, http.StatusOK},
 	{"POST /reviews", "/reviews", "POST", map[string]any{"review": "otimo", "author": "murilo", "url_photo": "http://localhost/photo.jpg"}, http.StatusCreated},
-	{"PUT /reviews/{id}", "/reviews/1", "PUT", map[string]any{"review": "atualizado"}, http.StatusNoContent},
-	{"PATCH /reviews/{id}", "/reviews/1", "PATCH", map[string]any{"author_name": "novo nome"}, http.StatusNoContent},
+	{"PUT /reviews/{id}", "/reviews/1", "PUT", map[string]any{"review": "atualizado", "author": "murilo"}, http.StatusNoContent},
+	{"PATCH /reviews/{id}", "/reviews/1", "PATCH", map[string]any{"author": "novo nome", "review": "otimo"}, http.StatusNoContent},
 	{"DELETE /review/{id}", "/review/1", "DELETE", nil, http.StatusNoContent},
 
 	{"GET /destinations", "/destinations", "GET", nil, http.StatusOK},
-	{"POST /reviews", "/reviews", "POST", map[string]any{"img": nil, "name": "São Paulo", "price": 1000}, http.StatusCreated},
-	{"PUT /destinations/{id}", "/destinations/1", "PUT", map[string]any{"name": "Paris"}, http.StatusNoContent},
+	{"POST /destinations", "/destinations", "POST", map[string]any{"img": nil, "name": "São Paulo", "price": 1000}, http.StatusCreated},
+	{"PUT /destinations/{id}", "/destinations/1", "PUT", map[string]any{"name": "Paris", "price": 2000}, http.StatusNoContent},
 	{"DELETE /destinations/{id}", "/destinations/1", "DELETE", nil, http.StatusNoContent},
 }
 
